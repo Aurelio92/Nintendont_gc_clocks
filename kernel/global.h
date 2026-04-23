@@ -124,6 +124,17 @@ typedef s32(*ipccallback)(s32 result,void *usrdata);
 #define		HW_TIMER			(HW_REG_BASE + 0x010) //increments around every 526.7 nanoseconds
 #define		HW_PPCSPEED			(HW_REG_BASE + 0x018)
 #define		HW_DIFLAGS			(HW_REG_BASE + 0x180)
+#define		HW_CLOCKS			(HW_REG_BASE + 0x190)
+#define		HW_RESETS			(HW_REG_BASE + 0x194)
+
+#define		HW_AHBPROT			(HW_REG_BASE + 0x064)
+#define		HW_EXICTRL			(HW_REG_BASE + 0x070)
+#define		EXICTRL_ENABLE_EXI	1
+#define		DIFLAGS_BOOT_CODE	0x100000
+
+#define		EXI_REG_BASE		0xd806800
+#define		EXI_BOOT_BASE		(EXI_REG_BASE+0x040)
+
 #define		HW_VERSION			(HW_REG_BASE + 0x214)
 
 #define		MEM_REG_BASE		0xd8b4000
@@ -303,14 +314,23 @@ static inline u32 TicksToSecs(u32 time)
 {
 	//really accurate, it reports the first second is over about 0.5ms early and
 	//with a full 37.7 minutes difference its off by only about 0.7ms
-	return ((time >> 9)*283)>>20;
+	if (read32(HW_CLOCKS) & 2) {
+		return ((time >> 9)*424)>>20; //162MHz
+	} else {
+		return ((time >> 9)*283)>>20; //243MHz
+	}
 }
 
 static inline u32 TimerDiffTicks(u32 time)
 {
 	u32 curtime = read32(HW_TIMER);
 	if(time > curtime) return UINT_MAX; //wrapped, return UINT_MAX to reset
-	return curtime - time;
+	u32 diff = curtime - time;
+	if (read32(HW_CLOCKS) & 2) {
+		return diff + (diff >> 1);
+	} else {
+		return diff;
+	}
 }
 
 static inline u32 TimerDiffSeconds(u32 time)

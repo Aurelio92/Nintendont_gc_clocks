@@ -556,6 +556,9 @@ extern vu32 FoundVersion;
 extern void _jmp813();
 int main(int argc, char **argv)
 {
+	if (*(vu32*)0xD3003420 == 0x8DEA) {
+		_jmp813();
+	}
 	// Exit after 10 seconds if there is an error
 	__exception_setreload(10);
 //	u64 timeout = 0;
@@ -1678,6 +1681,10 @@ int main(int argc, char **argv)
 		memcpy((void*)0x81300000, multidol_ldr_bin, multidol_ldr_bin_size);
 		DCFlushRange((void*)0x81300000, multidol_ldr_bin_size);
 		ICInvalidateRange((void*)0x81300000, multidol_ldr_bin_size);
+
+		//This is such a hack. Ideally the kernel should branch straight to the bootloader bootstrap
+		*(vu32*)0xD3003420 = 0x8DEA; //Switch clock and reload
+		while (1);
 	}
 	_jmp813();
 
