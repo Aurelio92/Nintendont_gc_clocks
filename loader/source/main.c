@@ -557,6 +557,7 @@ extern void _jmp813();
 int main(int argc, char **argv)
 {
 	if (*(vu32*)0xD3003420 == 0x8DEA) {
+		*(vu32*)0xD3003420 = 0; //clear flag
 		_jmp813();
 	}
 	// Exit after 10 seconds if there is an error
@@ -1683,6 +1684,9 @@ int main(int argc, char **argv)
 		ICInvalidateRange((void*)0x81300000, multidol_ldr_bin_size);
 
 		//This is such a hack. Ideally the kernel should branch straight to the bootloader bootstrap
+		DCFlushRange((void*)0x80000000, 0x01800000); // flush all of MEM1
+		ICInvalidateRange((void*)0x80000000, 0x01800000);
+		__asm__ volatile("sync; eieio");
 		*(vu32*)0xD3003420 = 0x8DEA; //Switch clock and reload
 		while (1);
 	}

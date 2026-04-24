@@ -1,7 +1,7 @@
 #ifndef _POWERPC_H_
 #define _POWERPC_H_
 
-#include "powerpc.h"
+#include "global.h"
 
 void hardUDelay(u32 usec);
 

@@ -540,12 +540,8 @@ int _main( int argc, char *argv[] )
 			dbgprintf("Resetting PPC\r\n");
 			powerpc_reset();
 			dbgprintf("Done\r\n");
-			hardUDelay(100);
-			//clear32(HW_DIFLAGS, 0x00180000);
-
 			hardUDelay(1000);
-			write32(RESET_STATUS, 0);
-			sync_after_write((void*)RESET_STATUS, 0x20);
+			//clear32(HW_DIFLAGS, 0x00180000);
 		}
 		#ifdef USE_OSREPORTDM
 		sync_before_read( (void*)0x1860, 0x20 );
