@@ -109,7 +109,7 @@ u32 Apploader_Run()
 
 	/* Set basic information */
 	*(vu32*)0x800000F8 = 162000000;				// Bus Clock Speed
-	*(vu32*)0x800000FC = 729000000;				// CPU Clock Speed
+	*(vu32*)0x800000FC = 486000000;				// CPU Clock Speed
 
 	/* Set apploader entry function */
 	appldr_entry = apploader_hdr.entry;

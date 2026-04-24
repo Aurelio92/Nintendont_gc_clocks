@@ -121,6 +121,7 @@ static u32 CheckFor( u32 Buf, u32 Val )
 
 bool PatchTimers(u32 FirstVal, u32 Buffer, bool checkFloats)
 {
+	return false; //Disabled for GC clocks
 	/* The floats in the data sections */
 	if(checkFloats)
 	{
@@ -425,46 +426,50 @@ static u32 smc_pal50_arr_wii[11] =
 
 void PatchStaticTimers()
 {
+	//Changed for GC clocks. Keep AI clocks patches
+
 	sync_before_read((void*)0xE0, 0x20);
-	write32(0xF8, U32_TIMER_CLOCK_BUS_WII);
-	if(IsWiiUFastCPU())
-		write32(0xFC, U32_TIMER_CLOCK_CPU_FAST);
-	else
-		write32(0xFC, U32_TIMER_CLOCK_CPU_WII);
+	write32(0xF8, U32_TIMER_CLOCK_BUS_GC);
+	write32(0xFC, U32_TIMER_CLOCK_CPU_GC);
 	sync_after_write((void*)0xE0, 0x20);
-	if(write64A(0x001463E0, DBL_0_7716, DBL_1_1574))
-	{
-		#ifdef DEBUG_PATCH
-		dbgprintf("PatchTimers:[Majoras Mask NTSC-J] applied\r\n");
-		#endif
-	}
-	else if(write64A(0x00141C00, DBL_0_7716, DBL_1_1574))
-	{
-		#ifdef DEBUG_PATCH
-		dbgprintf("PatchTimers:[Majoras Mask NTSC-U] applied\r\n");
-		#endif
-	}
-	else if(write64A(0x00130860, DBL_0_7716, DBL_1_1574))
-	{
-		#ifdef DEBUG_PATCH
-		dbgprintf("PatchTimers:[Majoras Mask PAL] applied\r\n");
-		#endif
-	}
-	else if(read32(0x55A0) == 0x3C60000A && read32(0x55A4) == 0x38036000 
-		&& read32(0x55B0) == 0x380000FF)
-	{	/* The game uses 2 different timers */
-		write32(0x55A0, 0x3C60000F); //lis r3, 0xF
-		write32(0x55A4, 0x60609060); //ori r0, r3, 0x9060
-		write32(0x55B0, 0x38000180); //li r0, 0x180
-		/* Values get set twice */
-		write32(0x5ECC, 0x3C60000F); //lis r3, 0xF
-		write32(0x5ED4, 0x60609060); //ori r0, r3, 0x9060
-		write32(0x5ED8, 0x38600180); //li r3, 0x180
-		#ifdef DEBUG_PATCH
-		dbgprintf("PatchTimers:[GT Cube NTSC-J] applied\r\n");
-		#endif
-	}
-	else if(memcmp((void*)0x263130, smc_arr_gc, sizeof(smc_arr_gc)) == 0)
+	// if(IsWiiUFastCPU())
+	// 	write32(0xFC, U32_TIMER_CLOCK_CPU_FAST);
+	// else
+	// 	write32(0xFC, U32_TIMER_CLOCK_CPU_WII);
+	// sync_after_write((void*)0xE0, 0x20);
+	// if(write64A(0x001463E0, DBL_0_7716, DBL_1_1574))
+	// {
+	// 	#ifdef DEBUG_PATCH
+	// 	dbgprintf("PatchTimers:[Majoras Mask NTSC-J] applied\r\n");
+	// 	#endif
+	// }
+	// else if(write64A(0x00141C00, DBL_0_7716, DBL_1_1574))
+	// {
+	// 	#ifdef DEBUG_PATCH
+	// 	dbgprintf("PatchTimers:[Majoras Mask NTSC-U] applied\r\n");
+	// 	#endif
+	// }
+	// else if(write64A(0x00130860, DBL_0_7716, DBL_1_1574))
+	// {
+	// 	#ifdef DEBUG_PATCH
+	// 	dbgprintf("PatchTimers:[Majoras Mask PAL] applied\r\n");
+	// 	#endif
+	// }
+	// else if(read32(0x55A0) == 0x3C60000A && read32(0x55A4) == 0x38036000 
+	// 	&& read32(0x55B0) == 0x380000FF)
+	// {	/* The game uses 2 different timers */
+	// 	write32(0x55A0, 0x3C60000F); //lis r3, 0xF
+	// 	write32(0x55A4, 0x60609060); //ori r0, r3, 0x9060
+	// 	write32(0x55B0, 0x38000180); //li r0, 0x180
+	// 	/* Values get set twice */
+	// 	write32(0x5ECC, 0x3C60000F); //lis r3, 0xF
+	// 	write32(0x5ED4, 0x60609060); //ori r0, r3, 0x9060
+	// 	write32(0x5ED8, 0x38600180); //li r3, 0x180
+	// 	#ifdef DEBUG_PATCH
+	// 	dbgprintf("PatchTimers:[GT Cube NTSC-J] applied\r\n");
+	// 	#endif
+	// }
+	/*else*/ if(memcmp((void*)0x263130, smc_arr_gc, sizeof(smc_arr_gc)) == 0)
 	{
 		memcpy((void*)0x263130, smc_arr_wii, sizeof(smc_arr_wii));
 		write32(0x3FF368, 0x3FB0393E); //base value of 1.3767469 again
