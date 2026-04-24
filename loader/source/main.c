@@ -556,7 +556,7 @@ extern vu32 FoundVersion;
 extern void _jmp813();
 int main(int argc, char **argv)
 {
-	if (*(vu32*)0xD3003420 == 0x8DEA) {
+	if (*(vu32*)0xD3003420 == 0x9DEA) {
 		*(vu32*)0xD3003420 = 0; //clear flag
 		_jmp813();
 	}
