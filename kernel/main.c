@@ -521,6 +521,9 @@ int _main( int argc, char *argv[] )
 			powerpc_hang();
 			dbgprintf("Done\r\n");
 
+			write32(RESET_STATUS, 0x9DEA);
+			sync_after_write((void*)RESET_STATUS, 0x20);
+
 			dbgprintf("Switching clock\r\n");
 			powerpc_switch_clock();
 			dbgprintf("Done\r\n");
@@ -541,8 +544,6 @@ int _main( int argc, char *argv[] )
 			powerpc_reset();
 			dbgprintf("Done\r\n");
 			hardUDelay(1000);
-			write32(RESET_STATUS, 0x9DEA);
-			sync_after_write((void*)RESET_STATUS, 0x20);
 			//clear32(HW_DIFLAGS, 0x00180000);
 		}
 		#ifdef USE_OSREPORTDM
